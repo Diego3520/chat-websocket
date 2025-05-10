@@ -62,34 +62,57 @@
     </style>
 </head>
 <body>
+        <!-- Título de la página o sección -->
     <h2>CREATIVA</h2>
+
+    <!-- Contenedor donde se mostrarán los mensajes del chat -->
     <div id="chat"></div>
+
+    <!-- Contenedor del campo de texto y botón para enviar mensajes -->
     <div>
+        <!-- Campo de entrada de texto para escribir el mensaje -->
         <input type="text" id="msgInput" placeholder="Escribe tu mensaje..." />
+        
+        <!-- Botón que al hacer clic llama a la función send() para enviar el mensaje -->
         <button onclick="send()">Enviar</button>
     </div>
 
     <script>
+        // Obtiene una referencia al div donde se mostrarán los mensajes del chat
         const chat = document.getElementById('chat');
+
+        // Crea un nuevo objeto WebSocket y establece conexión con el servidor en localhost, puerto 8080
         const socket = new WebSocket('ws://localhost:8080');
 
+        // Evento que se dispara cuando el servidor envía un mensaje
         socket.onmessage = (event) => {
+            // Agrega el mensaje recibido dentro del div 'chat' como un nuevo div
             chat.innerHTML += `<div>${event.data}</div>`;
+            // Desplaza el scroll del div hacia abajo para mostrar el último mensaje
             chat.scrollTop = chat.scrollHeight;
         };
 
+        // Función que se ejecuta para enviar el mensaje al servidor
         function send() {
+            // Obtiene el valor (texto) que el usuario escribió en el input
             const msg = document.getElementById('msgInput').value;
+            // Verifica que el mensaje no esté vacío ni contenga solo espacios
             if (msg.trim() !== '') {
+                // Envía el mensaje al servidor usando WebSocket
                 socket.send(msg);
+                // Limpia el campo de texto para que el usuario pueda escribir otro mensaje
                 document.getElementById('msgInput').value = '';
             }
         }
+
+        // Añade un listener al campo de entrada para detectar cuando el usuario presiona 'Enter'
         document.getElementById('msgInput').addEventListener('keypress', function(e) {
+            // Si la tecla presionada es 'Enter', llama a la función send() para enviar el mensaje
             if (e.key === 'Enter') {
                 send();
             }
         });
     </script>
+
 </body>
 </html>
